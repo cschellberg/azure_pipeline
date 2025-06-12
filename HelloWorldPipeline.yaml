@@ -1,0 +1,6 @@
+trigger: none
+pool:
+  name: MyAgentPool
+steps:
+- script: echo "Hello from my self-hosted agent!"
+  displayName: 'Run a simple script'
