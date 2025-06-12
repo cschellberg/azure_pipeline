@@ -10,7 +10,6 @@ stages:
 
 - stage: DeployToLocalK8s
   displayName: 'Deploy to Local Kubernetes'
-  dependsOn: Build # This stage runs after the 'Build' stage completes
   jobs:
   - job: DeployApp
     displayName: 'Deploy Application to K8s'
