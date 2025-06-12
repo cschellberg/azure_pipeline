@@ -1,0 +1,38 @@
+# azure-pipelines.yml
+
+trigger:
+- main # This pipeline will run whenever changes are pushed to the 'main' branch
+
+pool:
+  # Use the name of your self-hosted agent pool
+  # Replace 'MyLocalAgentPool' with the actual name you gave it
+  name: MyAgentPool
+
+variables:
+
+
+stages:
+
+- stage: DeployToLocalK8s
+  displayName: 'Deploy to Local Kubernetes'
+  dependsOn: Build # This stage runs after the 'Build' stage completes
+  jobs:
+  - job: DeployApp
+    displayName: 'Deploy Application to K8s'
+    steps:
+    - task: KubernetesManifest@1 # Use this task for Kubernetes deployments
+      displayName: 'Deploy to Docker Desktop Kubernetes'
+      inputs:
+        kubernetesServiceConnection: 'MyDockerDesktopK8sConnection' # REPLACE with your K8s Service Connection Name
+        namespace: 'default' # Or your specific namespace
+        action: 'deploy'
+        # Point to your Kubernetes manifest files in your repository
+        # Make sure these paths are correct relative to your repo root
+        manifests: |
+          $(System.DefaultWorkingDirectory)/k8s/deployment.yaml
+          $(System.DefaultWorkingDirectory)/k8s/service.yaml
+        # Image to use in the manifest. KubernetesManifest task can substitute
+        # the image name in your manifest if it finds an image: section.
+        image: 'java-test:latest'
+        # Optional: You might need to set imagePullSecrets if pulling from a private registry
+        # imagePullSecrets: 'your-image-pull-secret'

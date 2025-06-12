@@ -1,0 +1,51 @@
+apiVersion: apps/v1 # API version for Deployment objects
+kind: Deployment # Type of Kubernetes object: Deployment
+metadata:
+  name: spring-app-deployment # Name of your Deployment. Keep it unique in the namespace.
+  labels:
+    app: spring-app # Labels for the Deployment itself
+spec:
+  replicas: 1 # Number of application instances (pods) to run. Start with 1 for local development.
+  selector:
+    matchLabels:
+      app: java-test # Selector to identify pods managed by this Deployment. Must match pod labels.
+  template: # Template for the Pods that this Deployment will create
+    metadata:
+      labels:
+        app: javaptest # Labels applied to the Pods. This is how the Deployment selects them.
+    spec:
+      containers:
+      - name: java-teset # Name of the container within the Pod
+        image: java-test:latest # IMPORTANT: Replace with your actual Docker image name and tag
+        # If using Azure Pipelines, this will typically be substituted: $(imageRepository):$(tag)
+        imagePullPolicy: IfNotPresent # Pull the image only if it's not already present on the node.
+                                      # For dev/testing, you might use 'Always' to ensure latest.
+        ports:
+        - containerPort: 8080 # The port your Spring Boot application listens on inside the container (default)
+        # Optional: Resource limits and requests for the container (good practice)
+        resources:
+          requests: # Minimum resources guaranteed
+            memory: "512Mi"
+            cpu: "250m" # 0.25 of a CPU core
+          limits: # Maximum resources container can use
+            memory: "1Gi"
+            cpu: "500m" # 0.5 of a CPU core
+        # Optional: Environment variables for your Spring Boot application
+        # env:
+        # - name: SERVER_PORT
+        #   value: "8080"
+        # - name: SPRING_PROFILES_ACTIVE
+        #   value: "dev"
+        # Optional: Liveness and Readiness probes (highly recommended for production)
+        # livenessProbe: # Checks if the app is still running (e.g., preventing deadlocks)
+        #   httpGet:
+        #     path: /actuator/health # Or a specific health endpoint of your app
+        #     port: 8080
+        #   initialDelaySeconds: 30
+        #   periodSeconds: 10
+        # readinessProbe: # Checks if the app is ready to serve traffic
+        #   httpGet:
+        #     path: /actuator/health
+        #     port: 8080
+        #   initialDelaySeconds: 15
+        #   periodSeconds: 5
