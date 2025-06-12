@@ -19,7 +19,8 @@ stages:
       inputs:
         kubernetesServiceConnection: 'MyDockerDesktopK8sConnection' # REPLACE with your K8s Service Connection Name
         namespace: 'default' # Or your specific namespace
-        action: 'deploy'
+        action: 'get'
+        resourceKind: 'node'
         # Point to your Kubernetes manifest files in your repository
         # Make sure these paths are correct relative to your repo root
         manifests: |
